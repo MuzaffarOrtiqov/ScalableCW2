@@ -1,0 +1,12 @@
+package api.vybe.dto.profile;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ProfileDetailUpdateDTO {
+    @NotBlank(message = "Name required")
+    private String name;
+}

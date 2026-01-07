@@ -1,0 +1,47 @@
+### REGISTR A USER
+POST localhost:8080/api/v1/auth/registration
+Content-Type: application/json
+Accept-Language: EN
+
+{
+  "name": "Muzaffar",
+  "username": "ortiqovmuzaffar171@gmail.com",
+  "password": "123456"
+}
+
+### Registration Email  Verification
+GET localhost:8080/api/v1/auth/registration/email-verification/eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJlYzY0NGQ3Ni0yNWEyLTQ4ZWEtOWNhMS1hYzczYmQyMzY4NDkiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODA4NDUxLCJleHAiOjE3NjY0MTMyNTF9.iapkxvNXgA0vOlJR4DaQvBWSMZUT7R8rs7bhDWnLKkU-16zbSqDMvJOlH3qYeDj5bAuuY-gm8RHOyK7njXs6wg?lang=RU
+
+
+### LOGIN
+POST localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "ortiqovmuzaffar171@gmail.com",
+  "password": "123456"
+}
+
+### Password Reset
+POST localhost:8080/api/v1/auth/password-reset
+Content-Type: application/json
+Accept-Language: EN
+
+{
+  "username": "muzaffarortiqov19@gmail.com"
+}
+
+### Reset Password Verification
+POST localhost:8080/api/v1/auth/password-reset-confirm
+Content-Type: application/json
+Accept-Language: EN
+
+{
+  "username": "muzaffarortiqov19@gmail.com",
+  "confirmCode": "39799",
+  "password": "12345"
+}
+
+
+
+

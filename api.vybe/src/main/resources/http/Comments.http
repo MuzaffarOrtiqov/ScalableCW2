@@ -1,0 +1,17 @@
+### Comments API Tests
+### Base URL Configuration
+@baseUrl = http://localhost:8080/api
+@videoId = 1
+@commentId = 1
+
+## ============================================
+### 2. Add Comment (User)
+### ============================================
+POST {{baseUrl}}/comments
+Content-Type: application/json
+
+{
+  "videoId": "63db4f05-dcb5-4147-a1ca-e8f5779760fd.mp4",
+  "username": "user",
+  "content": "This is an amazing video! Love the content 🔥"
+}

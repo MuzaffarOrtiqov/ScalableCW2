@@ -1,0 +1,66 @@
+### CREATE
+POST localhost:8080/api/v1/post
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+{
+  "title": "Ushalmas orzular",
+  "content": "Bu yerda eng ko'p xoxlangan orzular yashirin",
+  "photo": {
+    "photoId": "3652a057-1bb6-469b-a470-9a9944219846.jpg"
+  }
+}
+
+### GET PROFILE'S OWN POSTS
+GET localhost:8080/api/v1/post/profile?page=1&size?10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+### GET FULL DETAILS OF A POST
+GET localhost:8080/api/v1/post/public/b470ad8a-3b13-4a49-a8ca-745fa7edb972
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+### UPDATE A POST
+PUT localhost:8080/api/v1/post/b470ad8a-3b13-4a49-a8ca-745fa7edb972
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+{
+  "title": "Ushalmas orzular",
+  "content": "Bu yerda eng ko'p xoxlangan orzular yashiringan",
+  "photo": {
+    "photoId": "3652a057-1bb6-469b-a470-9a9944219846.jpg"
+  }
+}
+
+### DELETE A POST
+DELETE localhost:8080/api/v1/post/b470ad8a-3b13-4a49-a8ca-745fa7edb972
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+### FILTER POSTS
+POST localhost:8080/api/v1/post/public/filter?page=1&size=3
+Content-Type: application/json
+
+{
+  "query": "orzu"
+}
+
+### GET SIMILAR POSTS
+POST localhost:8080/api/v1/post/public/similar
+Content-Type: application/json
+
+{
+  "exceptId": "b470ad8a-3b13-4a49-a8ca-745fa7edb972"
+}
+
+### FILTER ADMIN POSTS
+POST localhost:8080/api/v1/post/filter
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJiYmYyOTA0ZS1lZjA1LTQzYTMtYTFlZC1kYTcyZWY5YTRkY2YiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzUyNzUwMTAzLCJleHAiOjE3NTMzNTQ5MDN9.bYh6et4P4So1hlXV7E-77oB_xsYE5xY66Uylt595oqCkEDF0rM-uvRDwTIgbvTNknon3QDTKCFGEm17pIVqcdQ
+
+{
+  "profileQuery": "Muzaffar",
+  "postQuery": null
+}

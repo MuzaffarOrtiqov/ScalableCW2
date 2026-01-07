@@ -1,0 +1,12 @@
+### Upload
+POST localhost:8080/api/v1/attach/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiJlYzY0NGQ3Ni0yNWEyLTQ4ZWEtOWNhMS1hYzczYmQyMzY4NDkiLCJzdWIiOiJtdXphZmZhcm9ydGlxb3YxOUBnbWFpbC5jb20iLCJpYXQiOjE3NjU4MTUwNjMsImV4cCI6MTc2NjQxOTg2M30.W3Ufr0pylpplLn045jrrKD9b7RwvJZinwKwiBgLwgIAZLfyg3bvT0z3Pr6BGIJIwH_JftmZZva6RJyizYft7hg
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="sunflower.jpg"
+
+< D:\Pic\sunflower.jpg
+
+### Open file
+GET localhost:8080/api/v1/attach/open/2a3ec588-4e2e-43b7-a2c4-f68d6500f54b.jpg

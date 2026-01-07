@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vybe Admin - Upload Media</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+<!-- Add auth middleware FIRST -->
+<script src="js/auth-middleware.js"></script>
+
+<!-- Admin Dashboard -->
+<div id="adminDashboard" class="dashboard-container">
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <h1 class="logo">Vybe Admin</h1>
+            <div class="header-actions">
+                <span class="admin-name">Admin User</span>
+                <button id="logoutBtn" class="btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎬</div>
+                    <div class="stat-info">
+                        <h3 id="totalVideos">0</h3>
+                        <p>Total Media</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-info">
+                        <h3>125.4K</h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-info">
+                        <h3>24.1K</h3>
+                        <p>Total Likes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>8.5K</h3>
+                        <p>Followers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h2>Upload New Media</h2>
+                <form id="uploadForm" class="upload-form">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <p class="upload-text">Drag and drop video or image file here or click to browse</p>
+                        <p class="upload-hint">Videos: MP4, MOV, AVI (Max 500MB) | Images: JPG, PNG, GIF, WebP</p>
+                        <input type="file" id="videoFile" accept="video/*,image/*" hidden>
+                    </div>
+
+                    <div id="videoPreview" class="video-preview" style="display: none;">
+                        <video id="previewVideo" controls style="display: none;"></video>
+                        <button type="button" id="removeVideo" class="btn-remove">Remove Media</button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="videoTitle">Title *</label>
+                            <input type="text" id="videoTitle" placeholder="Enter media title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="videoLocation">Location</label>
+                            <input type="text" id="videoLocation" placeholder="Add location">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="videoCaption">Caption</label>
+                        <textarea id="videoCaption" rows="3" placeholder="Write a caption..."></textarea>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="videoCategory">Category</label>
+                            <select id="videoCategory">
+                                <option value="nature">Nature</option>
+                                <option value="cooking">Cooking</option>
+                                <option value="travel">Travel</option>
+                                <option value="tech">Tech</option>
+                                <option value="sports">Sports</option>
+                                <option value="music">Music</option>
+                                <option value="education">Education</option>
+                                <option value="entertainment">Entertainment</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="videoTags">Tags (comma separated)</label>
+                            <input type="text" id="videoTags" placeholder="nature, sunset, travel">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="uploadBtn">
+                            <span class="btn-text">Upload Media</span>
+                            <span class="btn-loader" style="display: none;">
+                                    <span class="spinner"></span> Uploading...
+                                </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Video List -->
+            <div class="video-list-section">
+                <div class="section-header">
+                    <h2>Uploaded Media</h2>
+                    <div class="filter-tabs">
+                        <button class="tab active" data-filter="all">All</button>
+                        <button class="tab" data-filter="published">Published</button>
+                        <button class="tab" data-filter="draft">Draft</button>
+                    </div>
+                </div>
+
+                <div id="videoList" class="video-grid">
+                    <!-- Videos and Images will be dynamically added here -->
+                </div>
+
+                <div id="emptyState" class="empty-state">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                    <h3>No media uploaded yet</h3>
+                    <p>Upload your first video or image to get started</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<script src="js/admin-script.js"></script>
+</body>
+</html>

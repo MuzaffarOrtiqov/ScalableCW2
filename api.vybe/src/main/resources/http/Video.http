@@ -1,0 +1,66 @@
+### Upload Video
+POST http://localhost:8080/api/videos
+#Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+Content-Type: multipart/form-data; boundary=MyBoundary123
+
+--MyBoundary123
+Content-Disposition: form-data; name="video"; filename="sample.mp4"
+Content-Type: video/mp4
+
+< D:/Pic/sample.mp4
+--MyBoundary123
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "title": "Beautiful Sunset at the Beach",
+  "caption": "Amazing sunset captured at Malibu Beach",
+  "location": "Malibu, California",
+  "category": "nature",
+  "tags": "sunset, beach, nature, travel"
+}
+--MyBoundary123--
+
+### Get All Videos
+GET http://localhost:8080/api/videos
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### Get Video by ID
+GET http://localhost:8080/api/videos/cccf3d6e-b41d-4d70-9d9b-9b3ddb739b11
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### 6. Update Video
+PUT http://localhost:8080/api/videos/f4f08dc6-3ad8-4c35-9598-fe94f7b3aebc
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+Content-Type: application/json
+
+{
+  "title": "Updated Title - Stunning Sunset",
+  "caption": "Updated caption with more details about this amazing view",
+  "location": "Malibu Beach, CA",
+  "category": "travel",
+  "tags": "sunset, ocean, travel, california",
+  "status": "PUBLISHED"
+}
+
+### 7. Increment View Count
+POST http://localhost:8080/api/videos/f4f08dc6-3ad8-4c35-9598-fe94f7b3aebc/view
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### 8. Increment Like Count
+POST http://localhost:8080/api/videos/f4f08dc6-3ad8-4c35-9598-fe94f7b3aebc/like
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### 9. Get Dashboard Stats
+GET http://localhost:8080/api/videos/stats
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### 10. Stream Video
+GET http://localhost:8080/api/videos/stream/d0af5795-3936-4887-862b-d5a0ffacc054.mp4
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOiI1YzBkNGNmMi1mYWU1LTQ0NTUtOTA5Yi1hOTk2OGJkZTQyZWMiLCJzdWIiOiJvcnRpcW92bXV6YWZmYXIxNzFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODM3NTAxLCJleHAiOjE3NjY0NDIzMDF9.m-OUpQ84ZgfouxOfN9-zzAicgWaBaMRwqLZVjqyx8RK29zGlvHO3DAxtX0cfxTIxCAqECXXraiSu8ZGdhFcdUw
+
+### 11. Delete Video
+DELETE http://localhost:8080/api/videos/1
+
+###
+GET http://localhost:8080/api/videos/73a39ddb-0941-4cf1-9391-80c74f01bac3/stream
