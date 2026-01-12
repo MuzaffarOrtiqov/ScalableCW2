@@ -12,22 +12,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # 🔹 PostgreSQL service for CI
-    services:
-      postgres:
-        image: postgres:15
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: vybe_db
-          POSTGRES_USER: vybe_user
-          POSTGRES_PASSWORD: vybe_pass
-        options: >-
-          --health-cmd="pg_isready -U vybe_user"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
     # 1. Checkout repo
     - name: Checkout repository
