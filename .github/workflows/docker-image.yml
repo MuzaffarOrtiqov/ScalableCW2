@@ -1,18 +1,65 @@
-name: Docker Image CI
+name: Spring Boot CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
-
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    # 1. Checkout repo
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Set up Java
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    # 3. Build & Test (Spring Boot)
+    - name: Build with Maven
+      working-directory: ScalableCW2/api.vybe
+      run: ./mvnw clean package -DskipTests
+
+    - name: Run Tests
+      working-directory: ScalableCW2/api.vybe
+      run: ./mvnw test
+
+    # 4. Login to Azure Container Registry
+    - name: Login to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: myappregistry.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # 5. Build Docker image (FROM api.vybe)
+    - name: Build Docker image
+      run: |
+        docker build \
+          -t myappregistry.azurecr.io/backend-app:${{ github.sha }} \
+          -f ScalableCW2/api.vybe/Dockerfile \
+          ScalableCW2/api.vybe
+
+    # 6. Push Docker image
+    - name: Push Docker image
+      run: |
+        docker push myappregistry.azurecr.io/backend-app:${{ github.sha }}
+
+    # 7. Deploy to Azure Container App
+    - name: Deploy to Azure Container App
+      uses: azure/cli@v1
+      with:
+        inlineScript: |
+          az containerapp update \
+            --name backend-app \
+            --resource-group myapp-rg \
+            --image myappregistry.azurecr.io/backend-app:${{ github.sha }}
