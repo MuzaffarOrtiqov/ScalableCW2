@@ -1,9 +1,7 @@
 // ============================================
-// API Configuration
+// API Configuration for Azure
 // ============================================
-const API_BASE_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:8080/api'
-    : '/api';
+const API_BASE_URL = 'https://backend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io/api';
 
 // ============================================
 // User Credentials Database (Replace with API)

@@ -1,11 +1,9 @@
 // ============================================
-// API Configuration
+// API Configuration for Azure Deployment
 // ============================================
 const CONFIG = {
-    // API Base URL - Update this based on your environment
-    API_BASE_URL: window.location.hostname === 'localhost'
-        ? 'http://localhost:8080/api'
-        : '/api', // Use relative path in production
+    // API Base URL - Azure Container Apps Backend
+    API_BASE_URL: 'https://backend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io/api',
 
     // Request timeout (milliseconds)
     REQUEST_TIMEOUT: 30000,
@@ -135,7 +133,7 @@ const VideoAPI = {
      * Get video stream URL
      */
     async getStreamUrl(id) {
-        return API.get(`/videos/stream/${id}`);
+        return API.get(`/videos/${id}/stream`);
     },
 
     /**
