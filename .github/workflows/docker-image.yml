@@ -12,6 +12,22 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # 🔹 PostgreSQL service for CI
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: vybe_db
+          POSTGRES_USER: vybe_user
+          POSTGRES_PASSWORD: vybe_pass
+        options: >-
+          --health-cmd="pg_isready -U vybe_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
     # 1. Checkout repo
     - name: Checkout repository
@@ -32,15 +48,15 @@ jobs:
     - name: Grant execute permission to mvnw
       run: chmod +x api.vybe/mvnw
 
-    # 5. Build Spring Boot app
+    # 5. Build Spring Boot app (CI profile uses Postgres service)
     - name: Build with Maven
       working-directory: api.vybe
-      run: ./mvnw clean package -DskipTests
+      run: ./mvnw clean package -Dspring.profiles.active=ci
 
     # 6. Run tests
     - name: Run Tests
       working-directory: api.vybe
-      run: ./mvnw test
+      run: ./mvnw test -Dspring.profiles.active=ci
 
     # 7. Login to Azure Container Registry
     - name: Login to ACR
