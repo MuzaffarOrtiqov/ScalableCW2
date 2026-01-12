@@ -1,0 +1,74 @@
+name: Spring Boot CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout repo
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Set up Java
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    # 3. Show repo structure (DEBUG – can remove later)
+    - name: Show repo structure
+      run: ls -la
+
+    # 4. Grant permission to mvnw
+    - name: Grant execute permission to mvnw
+      run: chmod +x api.vybe/mvnw
+
+    # 5. Build Spring Boot app
+    - name: Build with Maven
+      working-directory: api.vybe
+      run: ./mvnw clean package -DskipTests
+
+    # 6. Run tests
+    - name: Run Tests
+      working-directory: api.vybe
+      run: ./mvnw test
+
+    # 7. Login to Azure Container Registry
+    - name: Login to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: myappregistry.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # 8. Build Docker image
+    - name: Build Docker image
+      run: |
+        docker build \
+          -f api.vybe/Dockerfile \
+          -t myappregistry.azurecr.io/backend-app:${{ github.sha }} \
+          api.vybe
+
+    # 9. Push Docker image
+    - name: Push Docker image
+      run: |
+        docker push myappregistry.azurecr.io/backend-app:${{ github.sha }}
+
+    # 10. Deploy to Azure Container App
+    - name: Deploy to Azure Container App
+      uses: azure/cli@v1
+      with:
+        inlineScript: |
+          az containerapp update \
+            --name backend-app \
+            --resource-group myapp-rg \
+            --image myappregistry.azurecr.io/backend-app:${{ github.sha }}
