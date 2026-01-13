@@ -12,6 +12,19 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
 
+# Optional: logging configuration
 logging:
   level:
     root: INFO
+
+# Optional: dummy mail config to satisfy EmailSendingService
+  mail:
+    host: localhost
+    port: 1025
+    username: test
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls.enable: false
