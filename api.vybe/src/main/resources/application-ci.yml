@@ -1,6 +1,7 @@
 spring:
   application:
     name: vybe-ci
+  domain: localhost   # <--- added this
 
   # ------------------------------
   # SERVER
