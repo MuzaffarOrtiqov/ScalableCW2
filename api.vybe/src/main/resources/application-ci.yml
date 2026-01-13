@@ -1,6 +1,5 @@
 spring:
-  profiles:
-    active: ci
+  domain: localhost
 
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -9,23 +8,10 @@ spring:
     password:
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: false
-
-  h2:
-    console:
-      enabled: false
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
 
 logging:
   level:
     root: INFO
-    org.hibernate.SQL: OFF
-    org.hibernate.type.descriptor.sql: OFF
-
-server:
-  port: 0
