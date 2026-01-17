@@ -3,7 +3,7 @@
 // ============================================
 const CONFIG = {
     // API Base URL - Azure Container Apps Backend
-    API_BASE_URL: 'https://backend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io/api',
+    API_BASE_URL: 'http://4.233.136.94:8080/api',
 
     // Request timeout (milliseconds)
     REQUEST_TIMEOUT: 30000,

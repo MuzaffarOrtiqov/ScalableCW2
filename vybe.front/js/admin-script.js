@@ -2,8 +2,8 @@
 // ============================================
 // API Configuration for Azure
 // ============================================
-const API_BASE_URL = 'https://backend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io/api';
-
+// const API_BASE_URL = 'https://backend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io/api';
+const API_BASE_URL = 'http://4.233.136.94:8080/api';
 
 // ============================================
 // State Management
