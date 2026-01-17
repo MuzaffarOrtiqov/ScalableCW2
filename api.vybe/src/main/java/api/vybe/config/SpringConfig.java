@@ -95,7 +95,8 @@ public class SpringConfig {
                 "http://localhost:5500",
                 "http://localhost:3000",
                 "http://127.0.0.1:5500",
-                "https://frontend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io"
+                "https://frontend-app.orangefield-b264d0f9.swedencentral.azurecontainerapps.io",
+                "http://4.233.136.94"
         ));
 
         // Allowed HTTP methods
