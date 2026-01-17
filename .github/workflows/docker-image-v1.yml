@@ -43,16 +43,16 @@ jobs:
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: myregistry.azurecr.io
+          login-server: myappregistry.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
       # 7. Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
-          docker build -t myregistry.azurecr.io/myapp:${{ github.sha }} -t myregistry.azurecr.io/myapp:latest ./api.vybe
-          docker push myregistry.azurecr.io/myapp:${{ github.sha }}
-          docker push myregistry.azurecr.io/myapp:latest
+          docker build -t myappregistry.azurecr.io/backend-app:${{ github.sha }} -t myappregistry.azurecr.io/backend-app:latest ./api.vybe
+          docker push myappregistry.azurecr.io/backend-app:${{ github.sha }}
+          docker push myappregistry.azurecr.io/backend-app:latest
 
       # 8. Deploy to Azure VM via SSH
       - name: Deploy to Azure VM
@@ -62,15 +62,19 @@ jobs:
           username: ${{ secrets.VM_SSH_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            # Login to ACR inside the VM
-            docker login myregistry.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+            # 1. Login to ACR inside the VM
+            docker login myappregistry.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
             
-            # Stop and remove existing container if exists
-            docker stop spring-app || true
-            docker rm spring-app || true
+            # 2. Stop and remove existing container if it exists
+            docker stop backend-app || true
+            docker rm backend-app || true
             
-            # Pull the latest image
-            docker pull myregistry.azurecr.io/myapp:latest
+            # 3. Pull the latest image from the registry
+            docker pull myappregistry.azurecr.io/backend-app:latest
             
-            # Run the new container
-            docker run -d --name spring-app -p 80:8080 myregistry.azurecr.io/myapp:latest
+            # 4. Run the new container with the missing environment variable
+            # Mapping VM port 8080 to container port 8080
+            docker run -d --name backend-app \
+              -p 8080:8080 \
+              -e SPRING_DOMAIN=http://${{ secrets.VM_SSH_IP }} \
+              myappregistry.azurecr.io/backend-app:latest
