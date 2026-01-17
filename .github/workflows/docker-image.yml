@@ -25,7 +25,7 @@ jobs:
 
     - name: Build with Maven
       working-directory: api.vybe
-      run: ./mvnw clean package -DskipTests # Use skipTests if you don't have a DB for CI yet
+      run: ./mvnw clean package -DskipTests
 
     - name: Login to ACR
       uses: azure/docker-login@v1
@@ -44,19 +44,22 @@ jobs:
     - name: Deploy to Azure VM via SSH
       uses: appleboy/ssh-action@v0.1.10
       with:
-        host: ${{ secrets.VM_SSH_IP }} # Your IP 4.233.136.94
-        username: ${{ secrets.VM_SSH_USER }} # azureuser
-        key: ${{ secrets.VM_SSH_KEY }} # Content of your .pem file
+        host: ${{ secrets.VM_SSH_IP }}
+        username: ${{ secrets.VM_SSH_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
         script: |
-          # Login to ACR inside the VM
+          # 1. Login to ACR inside the VM
           docker login myappregistry.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
           
-          # Stop and remove the old container
-          docker stop backend-app || true
-          docker rm backend-app || true
+          # 2. Force remove the old container (stops and deletes in one go)
+          # This prevents the "Conflict: name already in use" error
+          docker rm -f backend-app || true
           
-          # Pull the fresh image
+          # 3. Pull the fresh image from the registry
           docker pull myappregistry.azurecr.io/backend-app:latest
           
-          # Run the new container (Mapping port 8080 or 80)
+          # 4. Run the new container
           docker run -d --name backend-app -p 8080:8080 myappregistry.azurecr.io/backend-app:latest
+
+          # 5. Clean up unused/old images to save disk space
+          docker image prune -f
