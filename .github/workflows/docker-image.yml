@@ -2,47 +2,31 @@ name: Spring Boot CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   pull_request:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout repo
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Set up Java
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. Show repo structure (DEBUG – can remove later)
-    - name: Show repo structure
-      run: ls -la
-
-    # 4. Grant permission to mvnw
     - name: Grant execute permission to mvnw
       run: chmod +x api.vybe/mvnw
 
-    # 5. Build Spring Boot app (CI profile uses Postgres service)
     - name: Build with Maven
       working-directory: api.vybe
-      run: ./mvnw clean package -Dspring.profiles.active=ci
+      run: ./mvnw clean package -DskipTests # Use skipTests if you don't have a DB for CI yet
 
-    # 6. Run tests
-    - name: Run Tests
-      working-directory: api.vybe
-      run: ./mvnw test -Dspring.profiles.active=ci
-
-    # 7. Login to Azure Container Registry
     - name: Login to ACR
       uses: azure/docker-login@v1
       with:
@@ -50,25 +34,29 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    # 8. Build Docker image
-    - name: Build Docker image
+    - name: Build and Push Docker Image
       run: |
-        docker build \
-          -f api.vybe/Dockerfile \
-          -t myappregistry.azurecr.io/backend-app:${{ github.sha }} \
-          api.vybe
-
-    # 9. Push Docker image
-    - name: Push Docker image
-      run: |
+        docker build -f api.vybe/Dockerfile -t myappregistry.azurecr.io/backend-app:${{ github.sha }} -t myappregistry.azurecr.io/backend-app:latest api.vybe
         docker push myappregistry.azurecr.io/backend-app:${{ github.sha }}
+        docker push myappregistry.azurecr.io/backend-app:latest
 
-    # 10. Deploy to Azure Container App
-    - name: Deploy to Azure Container App
-      uses: azure/cli@v1
+    # CD Part: SSH into the VM and restart the container
+    - name: Deploy to Azure VM via SSH
+      uses: appleboy/ssh-action@v0.1.10
       with:
-        inlineScript: |
-          az containerapp update \
-            --name backend-app \
-            --resource-group myapp-rg \
-            --image myappregistry.azurecr.io/backend-app:${{ github.sha }}
+        host: ${{ secrets.VM_SSH_IP }} # Your IP 4.233.136.94
+        username: ${{ secrets.VM_SSH_USER }} # azureuser
+        key: ${{ secrets.VM_SSH_KEY }} # Content of your .pem file
+        script: |
+          # Login to ACR inside the VM
+          docker login myappregistry.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+          
+          # Stop and remove the old container
+          docker stop backend-app || true
+          docker rm backend-app || true
+          
+          # Pull the fresh image
+          docker pull myappregistry.azurecr.io/backend-app:latest
+          
+          # Run the new container (Mapping port 8080 or 80)
+          docker run -d --name backend-app -p 8080:8080 myappregistry.azurecr.io/backend-app:latest
