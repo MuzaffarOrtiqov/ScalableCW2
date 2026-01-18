@@ -133,7 +133,9 @@ const VideoAPI = {
      * Get video stream URL
      */
     async getStreamUrl(id) {
-        return API.get(`/videos/${id}`);
+        // DO NOT use API.get() here.
+        // Simply return the URL as a string inside an object.
+        return { url: `${CONFIG.API_BASE_URL}/videos/${id}` };
     },
 
     /**
