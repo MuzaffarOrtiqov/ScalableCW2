@@ -133,7 +133,7 @@ const VideoAPI = {
      * Get video stream URL
      */
     async getStreamUrl(id) {
-        return API.get(`/videos/${id}/stream`);
+        return API.get(`/videos/${id}`);
     },
 
     /**
