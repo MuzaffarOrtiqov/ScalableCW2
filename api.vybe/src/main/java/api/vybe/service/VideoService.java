@@ -8,10 +8,13 @@ import api.vybe.enums.VideoStatus;
 import api.vybe.exps.AppBadException;
 import api.vybe.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -150,6 +153,26 @@ public class VideoService {
         VideoEntity video = videoRepository.findById(id)
                 .orElseThrow(() -> new AppBadException("Video not found"));
         return video;
+    }
+
+    public Resource loadAsResource(String id) {
+        try {
+            // 1. Get the video metadata from the DB
+            VideoEntity video = videoRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Video not found"));
+
+            // 2. Get the file path (assuming stored in 'videos' folder)
+            Path file = Paths.get("videos").resolve(video.getOriginalFilename());
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Could not read file: " + video.getOriginalFilename());
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 
     public String generateStreamUrl(String id) {

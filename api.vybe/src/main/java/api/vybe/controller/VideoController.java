@@ -32,7 +32,7 @@ import java.util.Map;
 public class VideoController {
 
     private final VideoService videoService;
-    private final AzureBlobService azureBlobService;
+
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadVideo(
@@ -76,6 +76,20 @@ public class VideoController {
                         ? videoService.getAllVideos()
                         : videoService.getVideosByStatus(status);
         return ResponseEntity.ok(videos);
+    }
+
+    @GetMapping("/{id}/stream") // Add /stream here to differentiate
+    public ResponseEntity<Resource> streamVideo(@PathVariable String id) {
+        // Get the video metadata to find the filename
+        VideoResponseDto video = videoService.getVideoById(id);
+
+        // Load the file from your storage (Azure or Local)
+        Resource file = videoService.loadAsResource(video.getOriginalFilename());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + video.getOriginalFilename() + "\"")
+                .contentType(MediaType.parseMediaType("video/mp4")) // This forces the correct header
+                .body(file);
     }
 
     @GetMapping("/{id}")
