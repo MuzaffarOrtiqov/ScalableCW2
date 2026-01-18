@@ -1,38 +1,47 @@
-name: Frontend CI/CD
+name: Deploy Frontend
 
 on:
   push:
-    branches: [ "master" ] # Change to your main branch name
-    paths:
-      - 'frontend-app/**' # Only run when files in frontend folder change
+    branches: [ "master" ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Login to Azure Container Registry
+      - name: Login to ACR
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          login-server: myappregistry.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Frontend
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest ./frontend-app
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
+          # Use --no-cache to force Docker to ignore previous build layers
+          docker build --no-cache -t myappregistry.azurecr.io/frontend-app:latest ./vybe.front
+          docker push myappregistry.azurecr.io/frontend-app:latest
 
-      - name: Deploy to Azure VM via SSH
-        uses: appleboy/ssh-action@master
+      - name: Deploy Frontend to VM
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.VM_SSH_IP }}
           username: azureuser
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            docker login ${{ secrets.ACR_LOGIN_SERVER }} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+            # 1. Login to ACR inside the VM
+            docker login myappregistry.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+            
+            # 2. Forcefully remove old frontend container
             docker rm -f frontend-app || true
-            docker pull ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
-            docker run -d --name frontend-app -p 80:80 ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
+            
+            # 3. Remove the old image to ensure the new one is pulled
+            docker rmi myappregistry.azurecr.io/frontend-app:latest || true
+            
+            # 4. Pull the updated image
+            docker pull myappregistry.azurecr.io/frontend-app:latest
+            
+            # 5. Run the frontend on Port 80
+            docker run -d --name frontend-app -p 80:80 myappregistry.azurecr.io/frontend-app:latest
