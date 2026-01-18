@@ -1,0 +1,38 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ "master" ] # Change to your main branch name
+    paths:
+      - 'frontend-app/**' # Only run when files in frontend folder change
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest ./frontend-app
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
+
+      - name: Deploy to Azure VM via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_SSH_IP }}
+          username: azureuser
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            docker login ${{ secrets.ACR_LOGIN_SERVER }} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+            docker rm -f frontend-app || true
+            docker pull ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
+            docker run -d --name frontend-app -p 80:80 ${{ secrets.ACR_LOGIN_SERVER }}/frontend-app:latest
